@@ -1,0 +1,35 @@
+# Start containers
+#
+# start mysql
+# $ docker compose up --force-recreate --build photo-service-database -d
+#
+
+services:
+  # database definition
+  photo-service-database:
+    image: mysql
+    restart: always
+
+    environment:
+      MYSQL_HOST: ${DB_HOST}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+
+    networks:
+      - photo-service-network
+
+    # to be able to connect the db outside of the container
+    ports:
+      - ${DB_HOST_PORT}:${DB_HOST_PORT}
+
+    volumes:
+      - photo-service-data:/var/lib/mysql
+
+networks:
+  photo-service-network:
+
+volumes:
+  photo-service-data:
+
