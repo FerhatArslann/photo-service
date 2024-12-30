@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, IsUrl } from "class-validator";
+import { IsArray, IsEmail, IsNotEmpty, IsString, IsUrl } from "class-validator";
 
 export class CreatePhotoDto {
     @IsString()
@@ -20,4 +20,8 @@ export class CreatePhotoDto {
     @IsEmail()
     @IsNotEmpty()
     owner: string;
+
+    @IsArray()
+    @IsString({each: true})
+    categories: string[];
 }
