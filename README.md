@@ -1,99 +1,246 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Photo Service
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A RESTful API for managing users, photos, and categories, built with [NestJS](https://nestjs.com/) and MySQL. This service supports authentication (JWT), user management, photo uploads, and category tagging, suitable for photo-sharing or gallery applications.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- **User Management**: Register, authenticate, and manage users with hashed passwords.
+- **Profiles**: Each user has a profile with gender and photo.
+- **Photos**: Users can upload photos with metadata (name, location, description, URL) and assign categories.
+- **Categories**: Organize photos by categories; categories are unique and can be managed via the API.
+- **Authentication**: JWT-based login and route protection.
+- **MySQL Database**: Uses TypeORM for database access and migrations.
+- **Dockerized**: Includes a `docker-compose.yaml` for easy local MySQL setup.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Getting Started
 
-## Project setup
+### Prerequisites
+
+- Node.js (v18+ recommended)
+- npm
+- Docker (for local MySQL)
+
+### Installation
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
+If you see vulnerabilities after installation, you can try:
+
+```bash
+npm audit fix
+# Or, if needed (use with caution):
+npm audit fix --force
+```
+
+## Environment Variables Example
+Your `.env` file should look like this:
+
+```
+DB_HOST=localhost
+DB_HOST_PORT=3306
+DB_USER=photo_user
+DB_PASSWORD=password
+DB_ROOT_PASSWORD=rootpassword
+DB_DATABASE=photo_service_db
+
+# JWT secret for authentication
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=3600s
+```
+
+> **Security Note:**
+> - **Change all default passwords and secrets** before deploying or sharing your project.
+> - **Never commit your `.env` file to version control.** Add `.env` to your `.gitignore` file to keep sensitive data safe.
+
+### Running MySQL with Docker
+
+```bash
+docker compose up --force-recreate --build photo-service-database -d
+```
+
+---
+
+### Running the Application
 
 ```bash
 # development
-$ npm run start
+npm run start
 
 # watch mode
-$ npm run start:dev
+npm run start:dev
 
-# production mode
-$ npm run start:prod
+# production
+npm run start:prod
 ```
 
-## Run tests
+### Running Tests
 
 ```bash
 # unit tests
-$ npm run test
+npm run test
 
 # e2e tests
-$ npm run test:e2e
+npm run test:e2e
 
 # test coverage
-$ npm run test:cov
+npm run test:cov
 ```
+
+---
+
+### Logging into MySQL (inside Docker)
+
+1. Open Docker Desktop, go to **Containers**, and select your running MySQL container.
+2. Click the **Exec** tab to open a shell inside the container.
+3. Log in to MySQL using your credentials from the `.env` file:
+
+   ```sh
+   mysql -u photo_user -p photo_service_db
+   ```
+   Enter your password when prompted (`DB_PASSWORD` from `.env`).
+
+   Or, for root access:
+   ```sh
+   mysql -u root -p
+   ```
+   Enter your root password (`DB_ROOT_PASSWORD` from `.env`).
+
+### Useful MySQL Commands
+
+Once logged in, you can use these commands:
+
+- **Show all databases:**
+  ```sql
+  SHOW DATABASES;
+  ```
+
+- **Select your database:**
+  ```sql
+  USE photo_service_db;
+  ```
+
+- **Show all tables:**
+  ```sql
+  SHOW TABLES;
+  ```
+
+- **Describe a table:**
+  ```sql
+  DESCRIBE users;
+  ```
+
+![Docker Desktop](docs/screenshots/docker_desktop.png)
+
+---
+
+## API Interface (Swagger UI)
+
+This project includes an interactive API documentation and testing interface using Swagger.
+
+### Accessing Swagger UI
+
+1. **Start your NestJS application:**
+   ```bash
+   npm run start
+   ```
+2. **Open your browser and go to:**
+   ```
+   http://localhost:3000/api
+   ```
+   *(or `/docs` if configured that way)*
+
+3. **You will see an interface like this:**
+
+   ![Swagger UI Screenshot](docs/screenshots/swagger-ui.png)
+
+   - You can explore all endpoints, see request/response schemas, and try out API calls directly from your browser.
+   - Use the **Authorize** button to enter your JWT token for protected endpoints.
+
+> **Tip:** If you don't see the Swagger UI, check your `main.ts` for Swagger setup.
+
+## API Overview
+
+- **Auth**: `/login` (POST, returns JWT)
+- **Users**: `/users` (CRUD)
+- **Photos**: `/photos` (CRUD, assign categories)
+- **Categories**: `/categories` (CRUD)
+
+All endpoints (except `/login` and `/`) require JWT authentication.
+
+---
+
+## Using Postman
+
+You can use [Postman](https://www.postman.com/) to interact with all API endpoints, especially if you want to test authentication or if Swagger UI is missing features.
+
+### Example Workflow
+
+#### 1. Logging in to get a token
+
+- Open Postman and create a new **POST** request to:
+  ```
+  http://localhost:3000/login
+  ```
+- In the **Body** tab, select **raw** and **JSON** and enter:
+  ```json
+  {
+    "username": "your@email.com",
+    "password": "yourpassword"
+  }
+  ```
+- Click **Send**.
+- You will receive a response with an `access_token`.
+
+---
+
+#### 2. Authorizing requests with the token
+
+- Copy the `access_token` from the login response.
+- For protected endpoints, go to the **Headers** tab and add:
+  ```
+  Key: Authorization
+  Value: Bearer <your_token_here>
+  ```
+- Now you can make authenticated requests.
+
+---
+
+#### 3. Creating a new photo
+
+- Create a **POST** request to:
+  ```
+  http://localhost:3000/photos
+  ```
+- In the **Body** tab, select **raw** and **JSON** and enter:
+  ```json
+  {
+    "name": "Mountain view",
+    "location": "Alps",
+    "description": "Beautiful mountain landscape.",
+    "url": "http://example.com/photo.jpg",
+    "owner": "admin@example.com",
+    "categories": ["nature", "mountains"]
+  }
+  ```
+- Ensure the **Authorization** header is set as above.
+- Click **Send** to create a photo.
+
+![Postman create photo example](docs/screenshots/create_photo.png)
+
+---
 
 ## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+See [NestJS deployment docs](https://docs.nestjs.com/deployment) for best practices.
 
 ## Resources
 
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- [NestJS Documentation](https://docs.nestjs.com)
+- [TypeORM Documentation](https://typeorm.io)
+- [Docker Compose](https://docs.docker.com/compose/)
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+MIT

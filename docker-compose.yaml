@@ -22,7 +22,7 @@ services:
 
     # to be able to connect the db outside of the container
     ports:
-      - ${DB_HOST_PORT}:${DB_HOST_PORT}
+      - ${DB_HOST_PORT}:3306
 
     volumes:
       - photo-service-data:/var/lib/mysql
